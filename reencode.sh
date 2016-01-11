@@ -23,17 +23,19 @@
 #
 # A new avi file is created, input file is not modified.
 
-IF=$1
-TITLE=$2
-OF=`echo ${TITLE}|tr -d " "`
+
+OUTPATH="./reencode"
+mkdir -p "${OUTPATH}"
+
+IF="$1"; NOEXT="${IF%.*}"; NOPATH="${NOEXT##*/}"
+OF="${OUTPATH}/${NOPATH}-reencode.avi"
 
 echo "input file:  ${IF}"
 echo "output file: ${OF}"
-echo "Title:       ${TITLE}"
 
 ffmpeg  -i "${IF}" \
 	-r 25 -s 640x220 -aspect 16:9 -b:v 988k -vcodec libxvid -vtag xvid \
 	-acodec libmp3lame -ac 2 -ab 128k \
-	-metadata title="${TITLE}" \
-	"${OF}.avi"
+	-map_metadata -1 \
+	"${OF}"
 
